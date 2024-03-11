@@ -25,7 +25,7 @@ public class WorkloadController {
     private final WorkloadService workloadService;
 
     @PostMapping
-    public ResponseEntity<HttpStatus> modifyWorkload(@RequestBody @Valid ModifyWorkloadRequest request){
+    public ResponseEntity<HttpStatus> updateWorkload(@RequestBody @Valid ModifyWorkloadRequest request){
         Workload workload = workloadMapper.modifyWorkloadRequestToWorkload(request);
         if (request.actionType.equalsIgnoreCase("add")) workloadService.addWorkload(workload);
         else if (request.actionType.equalsIgnoreCase("delete")) workloadService.deletePartialWorkload(workload);
