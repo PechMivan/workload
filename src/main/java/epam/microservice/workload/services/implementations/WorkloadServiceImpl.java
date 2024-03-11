@@ -2,6 +2,7 @@ package epam.microservice.workload.services.implementations;
 
 import epam.microservice.workload.entities.Trainer;
 import epam.microservice.workload.entities.Workload;
+import epam.microservice.workload.exceptions.NotFoundException;
 import epam.microservice.workload.repositories.WorkloadRepository;
 import epam.microservice.workload.services.WorkloadService;
 import jakarta.transaction.Transactional;
@@ -75,7 +76,8 @@ public class WorkloadServiceImpl implements WorkloadService {
         );
 
         if (existingWorkload == null){
-            return; //throw exception
+            throw new NotFoundException(String.format("Workload with [year: %s | month: %s] for username %s not found.",
+                                         workload.getYear(), workload.getMonth(), workload.getTrainer().getUsername()));
         }
 
         int totalWorkingHours = existingWorkload.getTotalWorkingHours() - workload.getTotalWorkingHours();
