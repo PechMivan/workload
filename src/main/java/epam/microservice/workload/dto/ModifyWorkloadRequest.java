@@ -1,11 +1,10 @@
 package epam.microservice.workload.dto;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @NoArgsConstructor
 public class ModifyWorkloadRequest {
+
     public String username;
     public String firstname;
     public String lastname;

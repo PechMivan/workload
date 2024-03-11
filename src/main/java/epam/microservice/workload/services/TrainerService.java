@@ -4,7 +4,6 @@ import epam.microservice.workload.entities.Trainer;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
-@Service
 public interface TrainerService {
     Trainer getTrainerByUsername(String username);
 

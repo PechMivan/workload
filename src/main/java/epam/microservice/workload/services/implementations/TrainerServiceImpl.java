@@ -5,8 +5,10 @@ import epam.microservice.workload.repositories.TrainerRepository;
 import epam.microservice.workload.services.TrainerService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
+@Service
 public class TrainerServiceImpl implements TrainerService {
 
     private final TrainerRepository trainerRepository;

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,10 +21,10 @@ public class WorkloadController {
     private final WorkloadService workloadService;
 
     @PostMapping
-    public ResponseEntity<HttpStatus> modifyWorkload(ModifyWorkloadRequest request){
+    public ResponseEntity<HttpStatus> modifyWorkload(@RequestBody ModifyWorkloadRequest request){
         Workload workload = workloadMapper.modifyWorkloadRequestToWorkload(request);
         if (request.actionType.equalsIgnoreCase("add")) workloadService.addWorkload(workload);
-        if (request.actionType.equalsIgnoreCase("delete")) workloadService.deleteWorkload(workload);
+        if (request.actionType.equalsIgnoreCase("delete")) workloadService.deletePartialWorkload(workload);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

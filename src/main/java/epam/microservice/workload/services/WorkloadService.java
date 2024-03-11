@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
 public interface WorkloadService {
     Workload getWorkloadByUsernameAndYearAndMonth(String username,
                                                   String year,
@@ -20,6 +19,9 @@ public interface WorkloadService {
 
     @Transactional
     Workload createWorkload(Workload workload);
+
+    @Transactional
+    void deletePartialWorkload(Workload workload);
 
     @Transactional
     void deleteWorkload(Workload workload);

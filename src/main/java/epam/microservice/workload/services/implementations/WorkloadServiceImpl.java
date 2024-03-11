@@ -6,11 +6,13 @@ import epam.microservice.workload.repositories.WorkloadRepository;
 import epam.microservice.workload.services.WorkloadService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 
 @RequiredArgsConstructor
+@Service
 public class WorkloadServiceImpl implements WorkloadService {
 
     private final WorkloadRepository workloadRepository;
@@ -40,7 +42,8 @@ public class WorkloadServiceImpl implements WorkloadService {
         );
 
         if (existingWorkload == null){
-            existingWorkload = createWorkload(workload);
+            createWorkload(workload);
+            return;
         }
 
         existingWorkload.setTotalWorkingHours(existingWorkload.getTotalWorkingHours()
@@ -56,15 +59,15 @@ public class WorkloadServiceImpl implements WorkloadService {
 
         if(trainer == null){
             trainer = trainerService.createTrainer(workload.getTrainer());
-            workload.setTrainer(trainer);
         }
 
+        workload.setTrainer(trainer);
         return workloadRepository.save(workload);
     }
 
     @Transactional
     @Override
-    public void deleteWorkload(Workload workload){
+    public void deletePartialWorkload(Workload workload){
         Workload existingWorkload = getWorkloadByUsernameAndYearAndMonth(
                 workload.getTrainer().getUsername(),
                 workload.getYear(),
@@ -75,8 +78,17 @@ public class WorkloadServiceImpl implements WorkloadService {
             return; //throw exception
         }
 
-        workloadRepository.delete(existingWorkload);
+        int totalWorkingHours = existingWorkload.getTotalWorkingHours() - workload.getTotalWorkingHours();
+        if (totalWorkingHours > 0) {
+            existingWorkload.setTotalWorkingHours(totalWorkingHours);
+            workloadRepository.save(existingWorkload);
+        } else deleteWorkload(existingWorkload);
     }
 
+    @Transactional
+    @Override
+    public void deleteWorkload(Workload workload){
+        workloadRepository.delete(workload);
+    }
 
 }
