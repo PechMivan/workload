@@ -1,15 +1,15 @@
 package epam.microservice.workload.logger;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Component
+@RequiredArgsConstructor
 public class CustomWebConfigurer implements WebMvcConfigurer {
 
-    @Autowired
-    private InterceptLog logInterceptor;
+    private final InterceptLog logInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
