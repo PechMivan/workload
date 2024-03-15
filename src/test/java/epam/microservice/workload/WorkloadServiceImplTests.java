@@ -19,7 +19,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class WorkloadServiceImplTests {
+class WorkloadServiceImplTests {
 
     private final String USERNAME = "testUsername";
     private final String YEAR = "2022";

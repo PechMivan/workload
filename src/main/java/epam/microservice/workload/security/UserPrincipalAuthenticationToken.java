@@ -1,7 +1,9 @@
 package epam.microservice.workload.security;
 
+import lombok.EqualsAndHashCode;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 
+@EqualsAndHashCode(callSuper = true)
 public class UserPrincipalAuthenticationToken extends AbstractAuthenticationToken {
 
     UserPrincipal principal;

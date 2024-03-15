@@ -1,6 +1,7 @@
 package epam.microservice.workload.config;
 
 import epam.microservice.workload.security.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,11 +21,11 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 @SuppressWarnings("unused")
 public class WebSecurityConfig {
 
-    @Autowired
-    JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

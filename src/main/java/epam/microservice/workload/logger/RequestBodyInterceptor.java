@@ -1,6 +1,7 @@
 package epam.microservice.workload.logger;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpInputMessage;
@@ -11,12 +12,12 @@ import org.springframework.web.servlet.mvc.method.annotation.RequestBodyAdviceAd
 import java.lang.reflect.Type;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class RequestBodyInterceptor extends RequestBodyAdviceAdapter {
 
-    @Autowired
-    LoggingService logService;
-    @Autowired
-    HttpServletRequest request;
+    private final LoggingService logService;
+
+    private final HttpServletRequest request;
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {

@@ -4,6 +4,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,13 +16,14 @@ import java.io.IOException;
 import java.util.Optional;
 
 @Component
+@RequiredArgsConstructor
 @Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-    @Autowired
-    JwtDecoder jwtDecoder;
 
-    @Autowired
-    JwtToPrincipalConverter jwtToPrincipalConverter;
+    private final JwtDecoder jwtDecoder;
+
+
+    private final JwtToPrincipalConverter jwtToPrincipalConverter;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

@@ -1,6 +1,7 @@
 package epam.microservice.workload.security;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -9,6 +10,7 @@ import java.util.Collection;
 
 @Getter
 @Builder
+@EqualsAndHashCode
 public class UserPrincipal implements UserDetails {
 
     private final long userId;
