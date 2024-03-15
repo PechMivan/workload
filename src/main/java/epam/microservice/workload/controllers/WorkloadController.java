@@ -24,8 +24,8 @@ public class WorkloadController {
     @PostMapping
     public ResponseEntity<HttpStatus> updateWorkload(@RequestBody @Valid ModifyWorkloadRequest request){
         Workload workload = workloadMapper.modifyWorkloadRequestToWorkload(request);
-        if (request.actionType.equalsIgnoreCase("add")) workloadService.addHours(workload);
-        else if (request.actionType.equalsIgnoreCase("delete")) workloadService.removeHours(workload);
+        if (request.getActionType().equalsIgnoreCase("add")) workloadService.addHours(workload);
+        else if (request.getActionType().equalsIgnoreCase("delete")) workloadService.removeHours(workload);
         else throw new InvalidActionTypeException("Invalid action type. Accepted actions: add / delete.");
         return new ResponseEntity<>(HttpStatus.OK);
     }

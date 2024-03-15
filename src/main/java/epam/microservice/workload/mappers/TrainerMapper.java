@@ -11,10 +11,10 @@ public class TrainerMapper {
 
     public Trainer modifyWorkloadRequestToTrainer(ModifyWorkloadRequest request){
         Trainer.TrainerBuilder trainer = Trainer.builder();
-        trainer.username(request.username);
-        trainer.firstname(request.firstname);
-        trainer.lastname(request.lastname);
-        trainer.status(request.isActive);
+        trainer.username(request.getUsername());
+        trainer.firstname(request.getFirstname());
+        trainer.lastname(request.getLastname());
+        trainer.status(request.isActive());
         trainer.workloads(new ArrayList<>());
 
         return trainer.build();

@@ -16,12 +16,12 @@ public class WorkloadMapper {
     private final TrainerMapper trainerMapper;
 
     public Workload modifyWorkloadRequestToWorkload(ModifyWorkloadRequest request){
-        LocalDate date = parseDate(request.trainingDate);
+        LocalDate date = parseDate(request.getTrainingDate());
         Workload.WorkloadBuilder workload = Workload.builder();
 
         workload.year(String.valueOf(date.getYear()));
         workload.month(String.valueOf(date.getMonth()));
-        workload.totalWorkingHours(request.trainingDuration);
+        workload.totalWorkingHours(request.getTrainingDuration());
 
         Trainer trainer = trainerMapper.modifyWorkloadRequestToTrainer(request);
         workload.trainer(trainer);
