@@ -2,6 +2,7 @@ package epam.microservice.workload;
 
 import epam.microservice.workload.entities.Trainer;
 import epam.microservice.workload.entities.Workload;
+import epam.microservice.workload.exceptions.NotFoundException;
 import epam.microservice.workload.repositories.WorkloadRepository;
 import epam.microservice.workload.services.implementations.TrainerServiceImpl;
 import epam.microservice.workload.services.implementations.WorkloadServiceImpl;
@@ -114,11 +115,11 @@ public class WorkloadServiceImplTests {
         when(workloadRepository.findByTrainerUsernameAndYearAndMonth(anyString(), anyString(), anyString())).thenReturn(Optional.empty());
         when(workloadRepository.save(any(Workload.class))).thenReturn(inputWorkload);
         // Act
-        workloadService.addWorkload(inputWorkload);
+        workloadService.addHours(inputWorkload);
         // Assert
-        assertNotEquals(newWorkingHours, inputWorkload.getTotalWorkingHours());
+        assertEquals(newWorkingHours, inputWorkload.getTotalWorkingHours());
 
-        verify(workloadRepository, times(2)).save(inputWorkload); // 1 for saving workload hours and the other one for creating the workload
+        verify(workloadRepository, times(1)).save(inputWorkload); // Only one for creating the workload before returning
     }
 
     @Test
@@ -133,7 +134,7 @@ public class WorkloadServiceImplTests {
         when(workloadRepository.findByTrainerUsernameAndYearAndMonth(anyString(), anyString(), anyString())).thenReturn(Optional.of(existingWorkload));
         when(workloadRepository.save(any(Workload.class))).thenReturn(existingWorkload);
         // Act
-        workloadService.addWorkload(inputWorkload);
+        workloadService.addHours(inputWorkload);
         // Assert
         assertEquals(newWorkingHours + actualWorkingHours, existingWorkload.getTotalWorkingHours());
 
@@ -176,29 +177,73 @@ public class WorkloadServiceImplTests {
     }
 
     @Test
-    void deleteWorkload_withNonExistingWorkload_doesNothing(){
+    void removeHours_withNonExistingWorkload_throwsNotFoundException(){
         // Arrange
         when(workloadRepository.findByTrainerUsernameAndYearAndMonth(anyString(), anyString(), anyString()))
                 .thenReturn(Optional.empty());
 
-        // Act
-        workloadService.deleteWorkload(inputWorkload);
-
-        // Assert
+        // Act and Assert
+        assertThrows(NotFoundException.class, () -> workloadService.removeHours(inputWorkload));
+        verify(workloadRepository, never()).save(any());
         verify(workloadRepository, never()).delete(any());
     }
 
     @Test
-    void deleteWorkload_withExistingWorkload_successful(){
+    void removeHours_withExistingWorkloadAndPositiveTotalWorkingHours_successful(){
         // Arrange
+        existingWorkload.setTotalWorkingHours(20);
+        inputWorkload.setTotalWorkingHours(15);
         when(workloadRepository.findByTrainerUsernameAndYearAndMonth(anyString(), anyString(), anyString()))
                 .thenReturn(Optional.of(existingWorkload));
+
+        // Act
+        workloadService.removeHours(inputWorkload);
+
+        // Assert
+        verify(workloadRepository, times(1)).save(existingWorkload);
+        verify(workloadRepository, never()).delete(existingWorkload);
+    }
+
+    @Test
+    void removeHours_withExistingWorkloadAndNegativeTotalWorkingHours_successful(){
+        // Arrange
+        existingWorkload.setTotalWorkingHours(20);
+        inputWorkload.setTotalWorkingHours(25);
+        when(workloadRepository.findByTrainerUsernameAndYearAndMonth(anyString(), anyString(), anyString()))
+                .thenReturn(Optional.of(existingWorkload));
+
+        // Act
+        workloadService.removeHours(inputWorkload);
+
+        // Assert
+        verify(workloadRepository, never()).save(existingWorkload);
+        verify(workloadRepository, times(1)).delete(existingWorkload);
+    }
+
+    @Test
+    void removeHours_withExistingWorkloadAndZeroTotalWorkingHours_successful(){
+        // Arrange
+        existingWorkload.setTotalWorkingHours(20);
+        inputWorkload.setTotalWorkingHours(20);
+        when(workloadRepository.findByTrainerUsernameAndYearAndMonth(anyString(), anyString(), anyString()))
+                .thenReturn(Optional.of(existingWorkload));
+
+        // Act
+        workloadService.removeHours(inputWorkload);
+
+        // Assert
+        verify(workloadRepository, never()).save(existingWorkload);
+        verify(workloadRepository, times(1)).delete(existingWorkload);
+    }
+
+    @Test
+    void deleteWorkload_withWorkload_successful(){
 
         // Act
         workloadService.deleteWorkload(inputWorkload);
 
         // Assert
-        verify(workloadRepository, times(1)).delete(existingWorkload);
+        verify(workloadRepository, times(1)).delete(inputWorkload);
     }
 
 }

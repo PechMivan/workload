@@ -35,7 +35,7 @@ public class WorkloadServiceImpl implements WorkloadService {
 
     @Transactional
     @Override
-    public void addWorkload(Workload workload){
+    public void addHours(Workload workload){
         Workload existingWorkload = getWorkloadByUsernameAndYearAndMonth(
                                         workload.getTrainer().getUsername(),
                                         workload.getYear(),
@@ -47,8 +47,9 @@ public class WorkloadServiceImpl implements WorkloadService {
             return;
         }
 
-        existingWorkload.setTotalWorkingHours(existingWorkload.getTotalWorkingHours()
-                                              + workload.getTotalWorkingHours()
+        existingWorkload.setTotalWorkingHours(
+                existingWorkload.getTotalWorkingHours()
+                + workload.getTotalWorkingHours()
         );
         workloadRepository.save(existingWorkload);
     }
@@ -68,7 +69,7 @@ public class WorkloadServiceImpl implements WorkloadService {
 
     @Transactional
     @Override
-    public void deletePartialWorkload(Workload workload){
+    public void removeHours(Workload workload) {
         Workload existingWorkload = getWorkloadByUsernameAndYearAndMonth(
                 workload.getTrainer().getUsername(),
                 workload.getYear(),

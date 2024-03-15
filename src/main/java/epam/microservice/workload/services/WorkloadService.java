@@ -2,7 +2,6 @@ package epam.microservice.workload.services;
 
 import epam.microservice.workload.entities.Workload;
 import jakarta.transaction.Transactional;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -15,13 +14,13 @@ public interface WorkloadService {
                                                   String month);
 
     @Transactional
-    void addWorkload(Workload workload);
+    void addHours(Workload workload);
 
     @Transactional
     Workload createWorkload(Workload workload);
 
     @Transactional
-    void deletePartialWorkload(Workload workload);
+    void removeHours(Workload workload);
 
     @Transactional
     void deleteWorkload(Workload workload);

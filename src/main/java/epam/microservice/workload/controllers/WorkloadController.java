@@ -7,7 +7,6 @@ import epam.microservice.workload.mappers.WorkloadMapper;
 import epam.microservice.workload.services.WorkloadService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -25,8 +24,8 @@ public class WorkloadController {
     @PostMapping
     public ResponseEntity<HttpStatus> updateWorkload(@RequestBody @Valid ModifyWorkloadRequest request){
         Workload workload = workloadMapper.modifyWorkloadRequestToWorkload(request);
-        if (request.actionType.equalsIgnoreCase("add")) workloadService.addWorkload(workload);
-        else if (request.actionType.equalsIgnoreCase("delete")) workloadService.deletePartialWorkload(workload);
+        if (request.actionType.equalsIgnoreCase("add")) workloadService.addHours(workload);
+        else if (request.actionType.equalsIgnoreCase("delete")) workloadService.removeHours(workload);
         else throw new InvalidActionTypeException("Invalid action type. Accepted actions: add / delete.");
         return new ResponseEntity<>(HttpStatus.OK);
     }
