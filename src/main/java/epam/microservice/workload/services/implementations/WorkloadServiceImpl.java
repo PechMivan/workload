@@ -2,7 +2,7 @@ package epam.microservice.workload.services.implementations;
 
 import epam.microservice.workload.entities.Trainer;
 import epam.microservice.workload.entities.Workload;
-import epam.microservice.workload.exceptions.NotFoundException;
+import epam.microservice.workload.exceptions.customExceptions.NotFoundException;
 import epam.microservice.workload.repositories.WorkloadRepository;
 import epam.microservice.workload.services.WorkloadService;
 import jakarta.transaction.Transactional;

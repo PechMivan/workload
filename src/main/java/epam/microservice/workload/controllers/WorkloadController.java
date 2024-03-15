@@ -2,7 +2,7 @@ package epam.microservice.workload.controllers;
 
 import epam.microservice.workload.dto.ModifyWorkloadRequest;
 import epam.microservice.workload.entities.Workload;
-import epam.microservice.workload.exceptions.InvalidActionTypeException;
+import epam.microservice.workload.exceptions.customExceptions.InvalidActionTypeException;
 import epam.microservice.workload.mappers.WorkloadMapper;
 import epam.microservice.workload.services.WorkloadService;
 import jakarta.validation.Valid;
