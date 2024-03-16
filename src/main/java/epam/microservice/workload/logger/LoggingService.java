@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface LoggingService {
 
-    void displayReq(HttpServletRequest request, Object body);
+    void displayRequest(HttpServletRequest request, Object body);
 
-    void displayResp(HttpServletRequest request, HttpServletResponse response, Object body);
+    void displayResponse(HttpServletRequest request, HttpServletResponse response, Object body);
 }

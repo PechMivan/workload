@@ -20,7 +20,7 @@ public class RequestBodyInterceptor extends RequestBodyAdviceAdapter {
 
     @Override
     public Object afterBodyRead(Object body, HttpInputMessage inputMessage, MethodParameter parameter, Type targetType, Class<? extends HttpMessageConverter<?>> converterType) {
-        logService.displayReq(request,body);
+        logService.displayRequest(request,body);
         return super.afterBodyRead(body, inputMessage, parameter, targetType, converterType);
     }
 

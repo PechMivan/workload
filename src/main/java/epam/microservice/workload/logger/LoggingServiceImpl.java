@@ -2,19 +2,22 @@ package epam.microservice.workload.logger;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
 @Service
+@Slf4j
 public class LoggingServiceImpl implements LoggingService{
 
-    Logger logger = LoggerFactory.getLogger("LoggingServiceImpl");
-
     @Override
-    public void displayReq(HttpServletRequest request, Object body) {
+    public void displayRequest(HttpServletRequest request, Object body) {
+        String reqMessage = buildRequestMessage(request, body);
+        log.info("Request: {}", reqMessage);
+    }
+
+    private String buildRequestMessage(HttpServletRequest request, Object body) {
         StringBuilder reqMessage = new StringBuilder();
         Map<String,String> parameters = getParameters(request);
 
@@ -30,15 +33,20 @@ public class LoggingServiceImpl implements LoggingService{
             reqMessage.append(" body = [").append(body).append("]");
         }
 
-        logger.info("Request: {}", reqMessage);
+        return reqMessage.toString();
     }
 
     @Override
-    public void displayResp(HttpServletRequest request, HttpServletResponse response, Object body) {
+    public void displayResponse(HttpServletRequest request, HttpServletResponse response, Object body) {
         if(request.getRequestURI().equalsIgnoreCase("/actuator/prometheus")){
             return;
         }
 
+        String respMessage = buildResponseMessage(request, response, body);
+        log.info("Response: {}",respMessage);
+    }
+
+    private String buildResponseMessage(HttpServletRequest request, HttpServletResponse response, Object body) {
         StringBuilder respMessage = new StringBuilder();
         Map<String,String> headers = getHeaders(response);
         respMessage.append("RESPONSE ");
@@ -51,7 +59,7 @@ public class LoggingServiceImpl implements LoggingService{
         }
 
         respMessage.append(" responseStatus = [").append(response.getStatus()).append("]");
-        logger.info("Response: {}",respMessage);
+        return respMessage.toString();
     }
 
     private Map<String,String> getHeaders(HttpServletResponse response) {
