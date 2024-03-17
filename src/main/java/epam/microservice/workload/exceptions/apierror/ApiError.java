@@ -28,7 +28,7 @@ public class ApiError {
         this.status = status;
     }
 
-    public void addSubError(ApiSubError subError){
+    private void addSubError(ApiSubError subError){
         if (subErrors == null) {
             subErrors = new ArrayList<>();
         }
