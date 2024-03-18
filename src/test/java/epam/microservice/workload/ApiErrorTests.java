@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ApiErrorTests {
+class ApiErrorTests {
 
     @Test
     void addValidationError_withNonEmptyList_successful(){

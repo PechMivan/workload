@@ -47,7 +47,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logRequestMessage_withCompleteData_successful() {
+    void logRequestMessage_withCompleteData_successful() {
         // Arrange
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/example/path");
@@ -65,7 +65,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logRequestMessage_withoutParameters_logsMessageWithoutParameters() {
+    void logRequestMessage_withoutParameters_logsMessageWithoutParameters() {
         // Arrange
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/example/path");
@@ -82,7 +82,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logRequestMessage_withoutBody_logsMessageWithoutBody() {
+    void logRequestMessage_withoutBody_logsMessageWithoutBody() {
         // Arrange
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/example/path");
@@ -100,7 +100,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logRequestMessage_withoutParametersAndBody_logsMessageWithoutParametersAndBody() {
+    void logRequestMessage_withoutParametersAndBody_logsMessageWithoutParametersAndBody() {
         // Arrange
         when(request.getMethod()).thenReturn("GET");
         when(request.getRequestURI()).thenReturn("/example/path");
@@ -117,7 +117,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logResponseMessage_withActuatorRequestURI_avoidsLog(){
+    void logResponseMessage_withActuatorRequestURI_avoidsLog(){
         // Arrange
         when(request.getRequestURI()).thenReturn("/actuator/prometheus");
 
@@ -129,7 +129,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logResponseMessage_withCompleteData_successful(){
+    void logResponseMessage_withCompleteData_successful(){
         // Arrange
         when(request.getRequestURI()).thenReturn("/example/path");
         when(request.getMethod()).thenReturn("GET");
@@ -147,7 +147,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logResponseMessage_withoutHeaders_logsMessageWithoutHeaders(){
+    void logResponseMessage_withoutHeaders_logsMessageWithoutHeaders(){
         // Arrange
         when(request.getRequestURI()).thenReturn("/example/path");
         when(request.getMethod()).thenReturn("GET");
@@ -164,7 +164,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logResponseMessage_withoutBody_logsMessageWithoutBody(){
+    void logResponseMessage_withoutBody_logsMessageWithoutBody(){
         // Arrange
         when(request.getRequestURI()).thenReturn("/example/path");
         when(request.getMethod()).thenReturn("GET");
@@ -182,7 +182,7 @@ class LoggingServiceImplTests {
     }
 
     @Test
-    public void logResponseMessage_withoutHeadersAndBody_logsMessageWithoutHeadersAndBody(){
+    void logResponseMessage_withoutHeadersAndBody_logsMessageWithoutHeadersAndBody(){
         // Arrange
         when(request.getRequestURI()).thenReturn("/example/path");
         when(request.getMethod()).thenReturn("GET");
