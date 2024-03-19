@@ -1,6 +1,6 @@
 package epam.microservice.workload.config;
 
-import epam.microservice.workload.entities.Workload;
+import epam.microservice.workload.dto.ModifyWorkloadRequest;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +24,7 @@ public class JmsConfig {
         MappingJackson2MessageConverter converter = new MappingJackson2MessageConverter();
 
         Map<String, Class<?>> typeIdMappings = new HashMap<>();
-        typeIdMappings.put("JMS_TYPE", Workload.class);
-
+        typeIdMappings.put("JMS_TYPE", ModifyWorkloadRequest.class);
         converter.setTypeIdMappings(typeIdMappings);
         converter.setTargetType(MessageType.TEXT);
         converter.setTypeIdPropertyName("_type");
