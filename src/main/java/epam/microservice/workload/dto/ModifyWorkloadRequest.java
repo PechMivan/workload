@@ -25,17 +25,4 @@ public class ModifyWorkloadRequest {
     private int trainingDuration;
     @NotBlank(message = "action type cannot be null or blank.")
     private String actionType;
-
-    @Override
-    public String toString() {
-        return "ModifyWorkloadRequest{" +
-                "username='" + username + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", active=" + active +
-                ", trainingDate='" + trainingDate + '\'' +
-                ", trainingDuration=" + trainingDuration +
-                ", actionType='" + actionType + '\'' +
-                '}';
-    }
 }

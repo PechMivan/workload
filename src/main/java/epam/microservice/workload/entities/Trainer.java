@@ -21,16 +21,4 @@ public class Trainer {
     private boolean status;
     @OneToMany(mappedBy = "trainer")
     List<Workload> workloads;
-
-    @Override
-    public String toString() {
-        return "Trainer{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", firstname='" + firstname + '\'' +
-                ", lastname='" + lastname + '\'' +
-                ", status=" + status +
-                ", workloads=" + workloads +
-                '}';
-    }
 }

@@ -21,15 +21,4 @@ public class Workload {
     @ManyToOne
     @JoinColumn(name = "trainer_id")
     Trainer trainer;
-
-    @Override
-    public String toString() {
-        return "Workload{" +
-                "id=" + id +
-                ", year='" + year + '\'' +
-                ", month='" + month + '\'' +
-                ", totalWorkingHours=" + totalWorkingHours +
-                ", trainer=" + trainer.toString() +
-                '}';
-    }
 }
