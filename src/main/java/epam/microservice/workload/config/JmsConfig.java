@@ -2,6 +2,7 @@ package epam.microservice.workload.config;
 
 import epam.microservice.workload.dto.ModifyWorkloadRequest;
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
@@ -14,9 +15,17 @@ import java.util.Map;
 
 @Configuration
 public class JmsConfig {
+
+    @Value("${activeMQ.username}")
+    private String activeMQUsername;
+    @Value("${activeMQ.password}")
+    private String activeMQPassword;
+    @Value("${activeMQ.url}")
+    private String activeMQUrl;
+
     @Bean
     public ActiveMQConnectionFactory connectionFactory(){
-        return new ActiveMQConnectionFactory("admin", "admin", "tcp://localhost:61616");
+        return new ActiveMQConnectionFactory(activeMQUsername, activeMQPassword, activeMQUrl);
     }
 
     @Bean
