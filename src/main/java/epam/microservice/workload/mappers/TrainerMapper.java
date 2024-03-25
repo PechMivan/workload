@@ -1,7 +1,6 @@
 package epam.microservice.workload.mappers;
 
 import epam.microservice.workload.dto.ModifyWorkloadRequest;
-import epam.microservice.workload.entities.Trainer;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

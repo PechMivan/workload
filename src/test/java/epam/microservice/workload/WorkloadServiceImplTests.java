@@ -1,6 +1,5 @@
 package epam.microservice.workload;
 
-import epam.microservice.workload.entities.Trainer;
 import epam.microservice.workload.entities.Workload;
 import epam.microservice.workload.exceptions.customExceptions.NotFoundException;
 import epam.microservice.workload.repositories.WorkloadMongoRepository;
