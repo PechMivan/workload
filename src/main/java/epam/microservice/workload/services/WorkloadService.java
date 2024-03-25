@@ -1,7 +1,6 @@
 package epam.microservice.workload.services;
 
 import epam.microservice.workload.entities.Workload;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
 
@@ -13,15 +12,13 @@ public interface WorkloadService {
     List<Workload> getWorkloadsByUsernameAndMonth(String username,
                                                   String month);
 
-    @Transactional
+    Workload getWorkloadByUsername(String username);
+
     void addHours(Workload workload);
 
-    @Transactional
     Workload createWorkload(Workload workload);
 
-    @Transactional
     void removeHours(Workload workload);
 
-    @Transactional
     void deleteWorkload(Workload workload);
 }
