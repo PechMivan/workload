@@ -9,7 +9,6 @@ import epam.microservice.workload.services.WorkloadService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,7 +18,6 @@ import java.util.Optional;
 public class WorkloadServiceImpl implements WorkloadService {
 
     private final WorkloadMongoRepository workloadRepository;
-    private final TrainerServiceImpl trainerService;
 
     @Override
     public Workload getWorkloadByUsername(String username){
@@ -36,47 +34,81 @@ public class WorkloadServiceImpl implements WorkloadService {
             return;
         }
 
-        List<WorkloadYear> updatedYears = updateWorkloadYears(existingWorkload, workload);
+        List<WorkloadYear> updatedYears = addHoursToMonth(existingWorkload, workload);
         existingWorkload.setYears(updatedYears);
 
         workloadRepository.save(existingWorkload);
     }
 
-    private List<WorkloadYear> updateWorkloadYears(Workload existingWorkload, Workload request) {
-        List<WorkloadYear> years = existingWorkload.getYears();
-        // Get unique year value from request
-        String requestedYear = request.getYears().get(0).getYear();
-        boolean present = false;
-        for (WorkloadYear yearOnCheck : years){
-            if(yearOnCheck.getYear().equals(requestedYear)){
-                List<WorkloadMonth> updatedMonths = updateWorkloadMonths(yearOnCheck, request.getYears().get(0));
-                yearOnCheck.setMonths(updatedMonths);
-                present = true;
-                break;
-            }
+    private List<WorkloadYear> addHoursToMonth(Workload existingWorkload, Workload request){
+        List<WorkloadYear> existingYears = existingWorkload.getYears();
+
+        WorkloadYear requestedYear = request.getYears().get(0);
+        WorkloadMonth requestedMonth = requestedYear.getMonths().get(0);
+        String requestedYearString = requestedYear.getYear();
+        String requestedMonthString = requestedMonth.getMonth();
+
+        WorkloadYear existingWorkloadYear = createWorkloadYear(requestedYear);
+
+        int yearIndex = findYearIndex(existingYears, requestedYearString).orElse(-1);
+        if (yearIndex >= 0){
+            existingWorkloadYear = existingYears.get(yearIndex);
+        } else {
+            existingYears.add(existingWorkloadYear);
+            return  existingYears;
         }
-        if(!present){
-           years.add(request.getYears().get(0));
+
+        WorkloadMonth existingWorkloadMonth = createWorkloadMonth(requestedMonth);
+
+        List<WorkloadMonth> existingMonths = existingWorkloadYear.getMonths();
+        int monthIndex = findMonthIndex(existingMonths, requestedMonthString).orElse(-1);
+        if(monthIndex >= 0){
+            existingWorkloadMonth = existingMonths.get(monthIndex);
+            int totalHours = existingWorkloadMonth.getHoursSummary() + requestedMonth.getHoursSummary();
+            existingWorkloadMonth.setHoursSummary(totalHours);
+            existingWorkloadYear.getMonths().set(monthIndex, existingWorkloadMonth);
+        } else {
+            existingWorkloadYear.getMonths().add(existingWorkloadMonth);
         }
-        return years;
+
+        existingYears.set(yearIndex, existingWorkloadYear);
+        return existingYears;
     }
 
-    private List<WorkloadMonth> updateWorkloadMonths(WorkloadYear existingYear, WorkloadYear request) {
-        List<WorkloadMonth> months = existingYear.getMonths();
-        // Get unique month value from request
-        String requestedMonth = request.getMonths().get(0).getMonth();
-        boolean present = false;
-        for(WorkloadMonth monthOnCheck : months){
-            if(monthOnCheck.getMonth().equals(requestedMonth)){
-                int updatedHours = request.getMonths().get(0).getHoursSummary() + monthOnCheck.getHoursSummary();
-                monthOnCheck.setHoursSummary(updatedHours);
-                present = true;
+    private Optional<Integer> findMonthIndex(List<WorkloadMonth> existingMonths, String requestedMonthString) {
+        Integer index = 0;
+        for (WorkloadMonth monthOnCheck : existingMonths){
+            if(monthOnCheck.getMonth().equals(requestedMonthString)){
+                return Optional.of(index);
             }
+            index++;
         }
-        if (!present){
-            months.add(request.getMonths().get(0));
+        return Optional.empty();
+    }
+
+    private Optional<Integer> findYearIndex(List<WorkloadYear> existingYears, String requestedYearString) {
+        Integer index = 0;
+        for (WorkloadYear yearOnCheck : existingYears){
+            if(yearOnCheck.getYear().equals(requestedYearString)){
+                return Optional.of(index);
+            }
+            index++;
         }
-        return  months;
+        return Optional.empty();
+    }
+
+    private WorkloadMonth createWorkloadMonth(WorkloadMonth requestedMonth) {
+        return WorkloadMonth.builder()
+                .month(requestedMonth.getMonth())
+                .hoursSummary(requestedMonth.getHoursSummary())
+                .build();
+    }
+
+    private WorkloadYear createWorkloadYear(WorkloadYear requestedYear) {
+        return WorkloadYear.builder()
+                .year(requestedYear.getYear())
+                .months(requestedYear.getMonths())
+                .build();
     }
 
 
@@ -95,16 +127,44 @@ public class WorkloadServiceImpl implements WorkloadService {
             );
         }
 
-        int totalWorkingHours = existingWorkload.getTotalWorkingHours() - workload.getTotalWorkingHours();
-        if (totalWorkingHours > 0) {
-            existingWorkload.setTotalWorkingHours(totalWorkingHours);
-            workloadRepository.save(existingWorkload);
-        } else deleteWorkload(existingWorkload);
+        List<WorkloadYear> updatedYears = removeHoursToMonth(existingWorkload, workload);
+        existingWorkload.setYears(updatedYears);
+        workloadRepository.save(existingWorkload);
     }
 
-    @Override
-    public void deleteWorkload(Workload workload){
-        workloadRepository.delete(workload);
+    private List<WorkloadYear> removeHoursToMonth(Workload existingWorkload, Workload request) {
+        List<WorkloadYear> existingYears = existingWorkload.getYears();
+
+        WorkloadYear requestedYear = request.getYears().get(0);
+        WorkloadMonth requestedMonth = requestedYear.getMonths().get(0);
+        String requestedYearString = requestedYear.getYear();
+        String requestedMonthString = requestedMonth.getMonth();
+
+        int yearIndex = findYearIndex(existingYears, requestedYearString)
+                .orElseThrow(() -> new NotFoundException("Year doesn't exist"));
+        WorkloadYear existingWorkloadYear = existingYears.get(yearIndex);
+
+        List<WorkloadMonth> existingMonths = existingWorkloadYear.getMonths();
+        int monthIndex = findMonthIndex(existingMonths, requestedMonthString)
+                .orElseThrow(() -> new NotFoundException("Month doesn't exist"));
+        WorkloadMonth existingWorkloadMonth = existingMonths.get(monthIndex);
+
+        int totalHours = existingWorkloadMonth.getHoursSummary() - requestedMonth.getHoursSummary();
+        if (totalHours > 0){
+            existingWorkloadMonth.setHoursSummary(totalHours);
+            existingWorkloadYear.getMonths().set(monthIndex, existingWorkloadMonth);
+            existingYears.set(yearIndex, existingWorkloadYear);
+        } else {
+            existingWorkloadYear.getMonths().remove(monthIndex);
+        }
+
+        existingYears.set(yearIndex, existingWorkloadYear);
+
+        if(existingWorkloadYear.getMonths().isEmpty()){
+            existingYears.remove(yearIndex);
+        }
+
+        return existingYears;
     }
 
 }
