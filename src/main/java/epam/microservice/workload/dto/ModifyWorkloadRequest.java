@@ -17,7 +17,7 @@ public class ModifyWorkloadRequest {
     private String firstname;
     @NotBlank(message = "lastname cannot be null or blank.")
     private String lastname;
-    private boolean isActive;
+    private boolean active;
     @NotBlank(message = "training date cannot be null or blank.")
     private String trainingDate;
     @NotNull(message = "training duration cannot be null.")

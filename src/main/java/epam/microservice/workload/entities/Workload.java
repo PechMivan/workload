@@ -1,9 +1,12 @@
 package epam.microservice.workload.entities;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
+import java.util.List;
+
+@Document(collection = "workloads")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -11,14 +14,10 @@ import lombok.*;
 @Builder
 public class Workload {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name = "year_")
-    private String year;
-    @Column(name = "month_")
-    private String month;
-    private int totalWorkingHours;
-    @ManyToOne
-    @JoinColumn(name = "trainer_id")
-    Trainer trainer;
+    private String username;
+    private String firstname;
+    private String lastname;
+    private boolean status;
+    private List<WorkloadYear> years;
 }

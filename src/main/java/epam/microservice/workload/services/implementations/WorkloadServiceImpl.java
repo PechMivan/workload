@@ -1,84 +1,98 @@
 package epam.microservice.workload.services.implementations;
 
-import epam.microservice.workload.entities.Trainer;
 import epam.microservice.workload.entities.Workload;
+import epam.microservice.workload.entities.WorkloadMonth;
+import epam.microservice.workload.entities.WorkloadYear;
 import epam.microservice.workload.exceptions.customExceptions.NotFoundException;
-import epam.microservice.workload.repositories.WorkloadRepository;
+import epam.microservice.workload.repositories.WorkloadMongoRepository;
 import epam.microservice.workload.services.WorkloadService;
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @RequiredArgsConstructor
 @Service
 public class WorkloadServiceImpl implements WorkloadService {
 
-    private final WorkloadRepository workloadRepository;
+    private final WorkloadMongoRepository workloadRepository;
     private final TrainerServiceImpl trainerService;
 
     @Override
-    public Workload getWorkloadByUsernameAndYearAndMonth(String username,
-                                                         String year,
-                                                         String month){
-        return workloadRepository.findByTrainerUsernameAndYearAndMonth(username, year, month)
+    public Workload getWorkloadByUsername(String username){
+        return workloadRepository.findByUsername(username)
                 .orElse(null);
     }
 
     @Override
-    public List<Workload> getWorkloadsByUsernameAndMonth(String username,
-                                                         String month){
-        return workloadRepository.findByTrainerUsernameAndMonth(username, month);
-    }
-
-    @Transactional
-    @Override
     public void addHours(Workload workload){
-        Workload existingWorkload = getWorkloadByUsernameAndYearAndMonth(
-                                        workload.getTrainer().getUsername(),
-                                        workload.getYear(),
-                                        workload.getMonth()
-        );
+        Workload existingWorkload = getWorkloadByUsername(workload.getUsername());
 
         if (existingWorkload == null){
             createWorkload(workload);
             return;
         }
 
-        existingWorkload.setTotalWorkingHours(
-                existingWorkload.getTotalWorkingHours()
-                + workload.getTotalWorkingHours()
-        );
+        List<WorkloadYear> updatedYears = updateWorkloadYears(existingWorkload, workload);
+        existingWorkload.setYears(updatedYears);
+
         workloadRepository.save(existingWorkload);
     }
 
-    @Transactional
+    private List<WorkloadYear> updateWorkloadYears(Workload existingWorkload, Workload request) {
+        List<WorkloadYear> years = existingWorkload.getYears();
+        // Get unique year value from request
+        String requestedYear = request.getYears().get(0).getYear();
+        boolean present = false;
+        for (WorkloadYear yearOnCheck : years){
+            if(yearOnCheck.getYear().equals(requestedYear)){
+                List<WorkloadMonth> updatedMonths = updateWorkloadMonths(yearOnCheck, request.getYears().get(0));
+                yearOnCheck.setMonths(updatedMonths);
+                present = true;
+                break;
+            }
+        }
+        if(!present){
+           years.add(request.getYears().get(0));
+        }
+        return years;
+    }
+
+    private List<WorkloadMonth> updateWorkloadMonths(WorkloadYear existingYear, WorkloadYear request) {
+        List<WorkloadMonth> months = existingYear.getMonths();
+        // Get unique month value from request
+        String requestedMonth = request.getMonths().get(0).getMonth();
+        boolean present = false;
+        for(WorkloadMonth monthOnCheck : months){
+            if(monthOnCheck.getMonth().equals(requestedMonth)){
+                int updatedHours = request.getMonths().get(0).getHoursSummary() + monthOnCheck.getHoursSummary();
+                monthOnCheck.setHoursSummary(updatedHours);
+                present = true;
+            }
+        }
+        if (!present){
+            months.add(request.getMonths().get(0));
+        }
+        return  months;
+    }
+
+
     @Override
     public Workload createWorkload(Workload workload) {
-        Trainer trainer = trainerService.getTrainerByUsername(workload.getTrainer().getUsername());
-
-        if(trainer == null){
-            trainer = trainerService.createTrainer(workload.getTrainer());
-        }
-
-        workload.setTrainer(trainer);
         return workloadRepository.save(workload);
     }
 
-    @Transactional
     @Override
     public void removeHours(Workload workload) {
-        Workload existingWorkload = getWorkloadByUsernameAndYearAndMonth(
-                workload.getTrainer().getUsername(),
-                workload.getYear(),
-                workload.getMonth()
-        );
+        Workload existingWorkload = getWorkloadByUsername(workload.getUsername());
 
         if (existingWorkload == null){
-            throw new NotFoundException(String.format("Workload with [year: %s | month: %s] for username %s not found.",
-                                         workload.getYear(), workload.getMonth(), workload.getTrainer().getUsername()));
+            throw new NotFoundException(
+                    String.format("Workload for username %s not found.", workload.getUsername())
+            );
         }
 
         int totalWorkingHours = existingWorkload.getTotalWorkingHours() - workload.getTotalWorkingHours();
@@ -88,7 +102,6 @@ public class WorkloadServiceImpl implements WorkloadService {
         } else deleteWorkload(existingWorkload);
     }
 
-    @Transactional
     @Override
     public void deleteWorkload(Workload workload){
         workloadRepository.delete(workload);
