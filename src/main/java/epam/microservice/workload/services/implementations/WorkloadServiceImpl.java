@@ -7,6 +7,7 @@ import epam.microservice.workload.exceptions.customExceptions.NotFoundException;
 import epam.microservice.workload.repositories.WorkloadMongoRepository;
 import epam.microservice.workload.services.WorkloadService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class WorkloadServiceImpl implements WorkloadService {
 
     private final WorkloadMongoRepository workloadRepository;
@@ -28,6 +30,7 @@ public class WorkloadServiceImpl implements WorkloadService {
     @Override
     public void addHours(Workload workload){
         Workload existingWorkload = getWorkloadByUsername(workload.getUsername());
+
 
         if (existingWorkload == null){
             createWorkload(workload);

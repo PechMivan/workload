@@ -14,7 +14,7 @@ import java.util.List;
 @Builder
 public class Workload {
     @Id
-    private long id;
+    private String id;
     private String username;
     private String firstname;
     private String lastname;
