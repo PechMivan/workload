@@ -1,7 +1,6 @@
 package epam.microservice.workload;
 
 import epam.microservice.workload.dto.ModifyWorkloadRequest;
-import epam.microservice.workload.mappers.TrainerMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

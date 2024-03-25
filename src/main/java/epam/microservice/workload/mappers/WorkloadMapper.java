@@ -16,8 +16,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class WorkloadMapper {
 
-    private final TrainerMapper trainerMapper;
-
     public Workload modifyWorkloadRequestToWorkload(ModifyWorkloadRequest request){
         LocalDate date = DateHelper.parseDateString(request.getTrainingDate());
         List<WorkloadYear> yearList = new ArrayList<>();

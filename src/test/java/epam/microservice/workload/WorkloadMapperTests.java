@@ -3,7 +3,6 @@ package epam.microservice.workload;
 import epam.microservice.workload.dto.ModifyWorkloadRequest;
 import epam.microservice.workload.entities.Workload;
 import epam.microservice.workload.helpers.DateHelper;
-import epam.microservice.workload.mappers.TrainerMapper;
 import epam.microservice.workload.mappers.WorkloadMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
